@@ -52,29 +52,56 @@ public class BasicCharacterController : MonoBehaviour
     {
         float tickInterval = GameMode.Instance.GetTimeUntilNextTick();
         Vector3 nextPosition = mTransform.position;
+        float wrapAroundX = 0;
+        float wrapAroundX2 = 0;
+        bool doWrapAround = false;
         switch(mNextMovementAction) {
             case MovementAction.LEFT:
                 nextPosition += new Vector3(-1, 0, 0);
+                if (mTransform.position.x == -5) {
+                    doWrapAround = true;
+                    wrapAroundX = 4;
+                    wrapAroundX2 = 5;
+                }
                 mTransform.rotation = Quaternion.Euler(0, 0, 0);
                 break;
             case MovementAction.RIGHT:
                 nextPosition += new Vector3(1, 0, 0);
+                if (mTransform.position.x == 4) {
+                    doWrapAround = true;
+                    wrapAroundX = -5;
+                    wrapAroundX2 = -6;
+                }
                 mTransform.rotation = Quaternion.Euler(0, 180, 0);
                 break;
             case MovementAction.UP:
-                nextPosition += new Vector3(0, 0, 1);
-                mTransform.rotation = Quaternion.Euler(0, 90, 0);
+                if (mTransform.position.z < 4) {
+                    nextPosition += new Vector3(0, 0, 1);
+                }
+                 mTransform.rotation = Quaternion.Euler(0, 90, 0);
                 break;
             case MovementAction.DOWN:
-                nextPosition += new Vector3(0, 0, -1);
+                if (mTransform.position.z > -1) {
+                    nextPosition += new Vector3(0, 0, -1);
+                }
                 mTransform.rotation = Quaternion.Euler(0, 270, 0);
                 break;
             case MovementAction.ATTACK:
-                StartCoroutine(Attack());
+                StartCoroutine(Attack(nextPosition));
                 break;
         }
-        if (mNextMovementAction != MovementAction.NONE) {
+        if (mNextMovementAction != MovementAction.NONE && !doWrapAround) {
             LeanTween.move(this.gameObject, nextPosition, tickInterval).setEase(LeanTweenType.easeOutCubic);
+        } else if (doWrapAround) {
+            mTransform.position = nextPosition;
+            LeanTween.move(this.gameObject, nextPosition, tickInterval * 0.5f)
+                .setOnComplete(()=>{
+                    nextPosition.x = wrapAroundX2;
+                    mTransform.position = nextPosition;
+                    nextPosition.x = wrapAroundX;
+                    LeanTween.move(this.gameObject, nextPosition, tickInterval * 0.5f)
+                        .setEase(LeanTweenType.easeOutCubic);
+                });
         }
 
         bool didLandOnConveyor = false;
@@ -113,12 +140,25 @@ public class BasicCharacterController : MonoBehaviour
         }
     }
 
-    IEnumerator Attack()
+    IEnumerator Attack(Vector3 pos)
     {
+        float animTime = GameMode.Instance.GameTickInterval * 0.5f;
         Transform fist = mTransform.Find("Fist");
-        fist.Translate(-0.8f, 0, 0, Space.Self);
-        yield return new WaitForSeconds(GameMode.Instance.GameTickInterval * 0.8f);
-        fist.Translate(0.8f, 0, 0, Space.Self);
+        LeanTween.moveLocalX(fist.gameObject, fist.localPosition.x - 0.8f, animTime)
+            .setEase(LeanTweenType.easeOutExpo);
+        yield return new WaitForSeconds(animTime);
+        LeanTween.moveLocalX(fist.gameObject, fist.localPosition.x + 0.8f, animTime)
+            .setEase(LeanTweenType.easeOutExpo);
+
+        RaycastHit hit;
+        Debug.DrawRay(pos, mTransform.right * -1, Color.red, 1.0f);
+        if (Physics.Raycast(pos, mTransform.right * -1, out hit, 1.0f)) {
+            Debug.Log(hit.collider.name);
+            BasicCharacterController otherCharacter = hit.collider.GetComponent<BasicCharacterController>();
+            if (otherCharacter != null && otherCharacter != this) {
+                otherCharacter.Explode();
+            }
+        }
     }
 
     void Explode()
@@ -140,7 +180,9 @@ public class BasicCharacterController : MonoBehaviour
 
         if (bUserInput && mNextMovementAction == MovementAction.NONE)
         {
-            if (cInput.GetKeyDown("left" + MyID)) {
+            if (cInput.GetKey("attack" + MyID)) {
+                mNextMovementAction = MovementAction.ATTACK;
+            } else if (cInput.GetKeyDown("left" + MyID)) {
                 mNextMovementAction = MovementAction.LEFT;
             } else if (cInput.GetKeyDown("right" + MyID)) {
                 mNextMovementAction = MovementAction.RIGHT;
