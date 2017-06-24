@@ -19,10 +19,15 @@ public class CloneLogic : MonoBehaviour
     int mCloneFrameIndex;
     CloneState mState;
     BasicCharacterController mOriginalCharacter;
+    GameObject explosion;
 
     void OnDestroy()
     {
         GameMode.Instance.UnregisterPreGameTickMethod(OnPreGameTick);
+    }
+
+    public void SetExplosion(GameObject explosion) {
+        this.explosion = explosion;
     }
 
     public void SetOriginalCharacter(BasicCharacterController character)
@@ -53,6 +58,9 @@ public class CloneLogic : MonoBehaviour
             if (mCloneFrameIndex == mCloneFrames.Count) {
                 mState = CloneState.NONE;
                 Destroy(this.gameObject);
+
+                GameObject drop = Instantiate(explosion, transform.position, Quaternion.identity);
+                Destroy(explosion, 1);
             }
         }
     }
