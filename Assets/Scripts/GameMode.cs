@@ -17,6 +17,21 @@ public class GameMode : MonoBehaviour
     {
         mPreGameTickEvent += method;
     }
+
+    public void UnregisterGameTickMethod(System.Action method)
+    {
+        mGameTickEvent -= method;
+    }
+
+    public void UnregisterPreGameTickMethod(System.Action method)
+    {
+        mPreGameTickEvent -= method;
+    }
+
+    public float GetTimeUntilNextTick()
+    {
+        return GameTickInterval - timer;
+    }
     
     void Awake()
     {

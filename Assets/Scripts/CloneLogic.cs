@@ -20,9 +20,9 @@ public class CloneLogic : MonoBehaviour
     CloneState mState;
     BasicCharacterController mOriginalCharacter;
 
-    void Start()
+    void OnDestroy()
     {
-        mState = CloneState.NONE;
+        GameMode.Instance.UnregisterPreGameTickMethod(OnPreGameTick);
     }
 
     public void SetOriginalCharacter(BasicCharacterController character)
@@ -34,7 +34,7 @@ public class CloneLogic : MonoBehaviour
         GameMode.Instance.RegisterPreGameTickMethod(OnPreGameTick);
     }
 
-    void OnPreGameTick()
+    public void OnPreGameTick()
     {
         if (mState == CloneState.RECORDING)
         {
@@ -52,6 +52,7 @@ public class CloneLogic : MonoBehaviour
             GetComponent<BasicCharacterController>().SetCurrentAction(frame.action);
             if (mCloneFrameIndex == mCloneFrames.Count) {
                 mState = CloneState.NONE;
+                Destroy(this.gameObject);
             }
         }
     }
