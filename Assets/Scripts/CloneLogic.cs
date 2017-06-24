@@ -4,10 +4,7 @@ using System.Collections;
 
 public struct CloneFrame
 {
-    public Vector3 position;
-    public Quaternion rotation;
-    public bool action1;
-    public bool action2;
+    public BasicCharacterController.MovementAction action;
 }
 
 public enum CloneState
@@ -21,38 +18,32 @@ public class CloneLogic : MonoBehaviour
     List<CloneFrame> mCloneFrames;
     int mCloneFrameIndex;
     CloneState mState;
+    BasicCharacterController mOriginalCharacter;
 
-    IEnumerator Start()
+    public void SetOriginalCharacter(BasicCharacterController character)
     {
+        mOriginalCharacter = character;
         mCloneFrames = new List<CloneFrame>();
         mState = CloneState.RECORDING;
-        mTransform = this.transform;
-        yield return new WaitForSeconds(5.0f);
-        mState = CloneState.PLAYBACK;
         mCloneFrameIndex = 0;
-        yield return null;
     }
 
-    void Update()
+    void OnGameTick()
     {
         if (mState == CloneState.RECORDING)
         {
             CloneFrame frame;
-            frame.position = mTransform.position;
-            frame.rotation = mTransform.rotation;
-            frame.action1 = false;
-            frame.action2 = false;
-            //frame.action1 = Input.GetKey("action1");
-            //frame.action2 = Input.GetKey("action2");
+            frame.action = mOriginalCharacter.GetCurrentAction();
             mCloneFrames.Add(frame);
+            if (mCloneFrames.Count >= 20) {
+                mState = CloneState.PLAYBACK;
+                this.gameObject.SetActive(true);
+            }
         }
         else if (mState == CloneState.PLAYBACK)
         {
-            CloneFrame frame = mCloneFrames[mCloneFrameIndex++];
-            mTransform.position = frame.position;
-            mTransform.rotation = frame.rotation;
-            // action1 thing
-            // action2 thing
+            
         }
     }
+
 }
