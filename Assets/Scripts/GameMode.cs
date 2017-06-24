@@ -4,6 +4,8 @@ public class GameMode : MonoBehaviour
 {
     public float GameTickInterval;
     public float GameTimerOffset;
+    public int ScoreP1 = 0;
+    public int ScoreP2 = 0;
 
     public static GameMode Instance;
     float timer = 0.0f;
@@ -33,6 +35,15 @@ public class GameMode : MonoBehaviour
     public float GetTimeUntilNextTick()
     {
         return GameTickInterval - timer;
+    }
+
+    public void OnPlayerDie(BasicCharacterController character)
+    {
+        if (character.MyID == 1) {
+            ScoreP2++;
+        } else {
+            ScoreP1++;
+        }
     }
     
     void Awake()

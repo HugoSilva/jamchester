@@ -76,7 +76,7 @@ public class BasicCharacterController : MonoBehaviour
                 mTransform.rotation = Quaternion.Euler(0, 180, 0);
                 break;
             case MovementAction.UP:
-                if (mTransform.position.z < 4) {
+                if (mTransform.position.z < 5) {
                     nextPosition += new Vector3(0, 0, 1);
                 }
                  mTransform.rotation = Quaternion.Euler(0, 90, 0);
@@ -103,7 +103,7 @@ public class BasicCharacterController : MonoBehaviour
             }
         }
 
-        if (canMove) {
+        if (canMove || !bUserInput) {
             if (mNextMovementAction != MovementAction.NONE && !doWrapAround) {
                 LeanTween.move(this.gameObject, nextPosition, tickInterval).setEase(LeanTweenType.easeOutCubic);
             } else if (doWrapAround) {
@@ -180,8 +180,21 @@ public class BasicCharacterController : MonoBehaviour
     void Explode()
     {
         GameObject drop = Instantiate(explosion, transform.position, Quaternion.identity);
-        Destroy(this.gameObject);
-        Destroy(explosion, 1);
+        if (bUserInput) {
+            GameMode.Instance.OnPlayerDie(this);
+            this.gameObject.SetActive(false);
+            Invoke("Respawn", 3);
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+        Destroy(explosion.gameObject, 1);
+    }
+
+    void Respawn()
+    {
+        this.gameObject.SetActive(true);
     }
 
     void Update()
