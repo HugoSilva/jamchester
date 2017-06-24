@@ -17,6 +17,7 @@ public class FloorTile : MonoBehaviour
     void Start()
     {
         GameMode.Instance.RegisterGameTickMethod(OnGameTick);
+        this.transform.localRotation = Quaternion.Euler(90, Random.Range(0, 3) * 90, 0);
     }
 
     void OnGameTick()
