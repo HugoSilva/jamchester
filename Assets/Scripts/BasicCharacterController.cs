@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+
 public class BasicCharacterController : MonoBehaviour
 {
     public int MyID;
@@ -139,31 +140,15 @@ public class BasicCharacterController : MonoBehaviour
 
         if (bUserInput && mNextMovementAction == MovementAction.NONE)
         {
-            bool goLeft = Input.GetButtonDown("Left");
-            bool goRight = Input.GetButtonDown("Right");
-            bool goUp = Input.GetButtonDown("Up");
-            bool goDown = Input.GetButtonDown("Down");
-            bool doAttack = Input.GetButtonDown("Attack");
-            if (goLeft)
-            {
+            if (cInput.GetKeyDown("left" + MyID)) {
                 mNextMovementAction = MovementAction.LEFT;
-            }
-            else if (goRight)
-            {
+            } else if (cInput.GetKeyDown("right" + MyID)) {
                 mNextMovementAction = MovementAction.RIGHT;
-            }
-            else if (goUp)
-            {
-                mNextMovementAction = MovementAction.UP;
-            }
-            else if (goDown)
-            {
+            } else if (cInput.GetKeyDown("down" + MyID)) {
                 mNextMovementAction = MovementAction.DOWN;
-            }
-            else if (doAttack)
-            {
-                mNextMovementAction = MovementAction.ATTACK;
-            }
+            } else if (cInput.GetKeyDown("up" + MyID)) {
+                mNextMovementAction = MovementAction.UP;
+            }            
         }
     }
 }
