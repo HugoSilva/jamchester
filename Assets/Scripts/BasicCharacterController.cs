@@ -33,7 +33,6 @@ public class BasicCharacterController : MonoBehaviour
         GameMode.Instance.RegisterGameTickMethod(OnGameTick);
     }
 
-
     void OnDestroy()
     {
         GameMode.Instance.UnregisterGameTickMethod(OnGameTick);

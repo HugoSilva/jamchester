@@ -10,7 +10,7 @@ public class MenuManager : MonoBehaviour {
     public AudioSource selectSound;
 
     void Update() {
-        if(Input.GetButtonDown("Start") && !start) {
+        if(Input.GetButtonDown("Start1") && !start) {
             start = true;
             PlayButtonSFX();
         }
