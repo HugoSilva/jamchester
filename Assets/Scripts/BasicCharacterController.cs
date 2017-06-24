@@ -8,7 +8,7 @@ public class BasicCharacterController : MonoBehaviour
     }
     MovementAction mNextMovementAction;
     Transform mTransform;
-    bool bUserInput = true;
+    public bool bUserInput = true;
 
     public MovementAction GetCurrentAction()
     {
@@ -31,7 +31,7 @@ public class BasicCharacterController : MonoBehaviour
         GameMode.Instance.RegisterGameTickMethod(OnGameTick);
     }
 
-    void CreateClone()
+    public void CreateClone()
     {
         GameObject clone = Instantiate(this.gameObject, mTransform.position, mTransform.rotation);
         CloneLogic logic = clone.AddComponent<CloneLogic>();
