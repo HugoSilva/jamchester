@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameMode : MonoBehaviour
 {
@@ -6,6 +7,8 @@ public class GameMode : MonoBehaviour
     public float GameTimerOffset;
     public int ScoreP1 = 0;
     public int ScoreP2 = 0;
+    public Text ScoreP1Text;
+    public Text ScoreP2Text;
 
     public static GameMode Instance;
     float timer = 0.0f;
@@ -41,8 +44,10 @@ public class GameMode : MonoBehaviour
     {
         if (character.MyID == 1) {
             ScoreP2++;
+            ScoreP2Text.text = "" + ScoreP2;
         } else {
             ScoreP1++;
+            ScoreP1Text.text = "" + ScoreP1;
         }
     }
     
