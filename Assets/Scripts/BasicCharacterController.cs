@@ -60,14 +60,14 @@ public class BasicCharacterController : MonoBehaviour
                 nextPosition += new Vector3(-1, 0, 0);
                 if (mTransform.position.x == -5) {
                     doWrapAround = true;
-                    wrapAroundX = 4;
-                    wrapAroundX2 = 5;
+                    wrapAroundX = 3;
+                    wrapAroundX2 = 4;
                 }
                 mTransform.rotation = Quaternion.Euler(0, 0, 0);
                 break;
             case MovementAction.RIGHT:
                 nextPosition += new Vector3(1, 0, 0);
-                if (mTransform.position.x == 4) {
+                if (mTransform.position.x == 3) {
                     doWrapAround = true;
                     wrapAroundX = -5;
                     wrapAroundX2 = -6;
@@ -90,18 +90,32 @@ public class BasicCharacterController : MonoBehaviour
                 StartCoroutine(Attack(nextPosition));
                 break;
         }
-        if (mNextMovementAction != MovementAction.NONE && !doWrapAround) {
-            LeanTween.move(this.gameObject, nextPosition, tickInterval).setEase(LeanTweenType.easeOutCubic);
-        } else if (doWrapAround) {
-            mTransform.position = nextPosition;
-            LeanTween.move(this.gameObject, nextPosition, tickInterval * 0.5f)
-                .setOnComplete(()=>{
-                    nextPosition.x = wrapAroundX2;
-                    mTransform.position = nextPosition;
-                    nextPosition.x = wrapAroundX;
-                    LeanTween.move(this.gameObject, nextPosition, tickInterval * 0.5f)
-                        .setEase(LeanTweenType.easeOutCubic);
-                });
+
+        bool canMove = true;
+
+        Collider[] overlaps = Physics.OverlapBox(nextPosition, new Vector3(0.2f, 0.2f, 0.2f), Quaternion.identity);
+        for (int i = 0; i < overlaps.Length; i++) {
+            Collider overlap = overlaps[i];
+            BasicCharacterController otherCharacter = overlap.GetComponent<BasicCharacterController>();
+            if (otherCharacter != null  && otherCharacter.bUserInput && otherCharacter != this) {
+                canMove = false;
+            }
+        }
+
+        if (canMove) {
+            if (mNextMovementAction != MovementAction.NONE && !doWrapAround) {
+                LeanTween.move(this.gameObject, nextPosition, tickInterval).setEase(LeanTweenType.easeOutCubic);
+            } else if (doWrapAround) {
+                mTransform.position = nextPosition;
+                LeanTween.move(this.gameObject, nextPosition, tickInterval * 0.5f)
+                    .setOnComplete(()=>{
+                        nextPosition.x = wrapAroundX2;
+                        mTransform.position = nextPosition;
+                        nextPosition.x = wrapAroundX;
+                        LeanTween.move(this.gameObject, nextPosition, tickInterval * 0.5f)
+                            .setEase(LeanTweenType.easeOutCubic);
+                    });
+            }
         }
 
         bool didLandOnConveyor = false;
@@ -171,10 +185,10 @@ public class BasicCharacterController : MonoBehaviour
         Collider[] overlaps = Physics.OverlapBox(mTransform.position, new Vector3(0.2f, 0.2f, 0.2f), Quaternion.identity);
         for (int i = 0; i < overlaps.Length; i++) {
             Collider overlap = overlaps[i];
-            BasicCharacterController otherCharacter = overlap.GetComponent<BasicCharacterController>();
-            if (otherCharacter != null && otherCharacter != this) {
+            CloneLogic otherCharacter = overlap.GetComponent<CloneLogic>();
+            if (otherCharacter != null && otherCharacter != this.GetComponent<CloneLogic>()) {
                 this.Explode();
-                otherCharacter.Explode();
+                otherCharacter.GetComponent<BasicCharacterController>().Explode();
             }
         }
 

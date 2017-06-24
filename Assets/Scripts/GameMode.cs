@@ -3,6 +3,8 @@ using UnityEngine;
 public class GameMode : MonoBehaviour
 {
     public float GameTickInterval;
+    public float GameTimerOffset;
+
     public static GameMode Instance;
     float timer = 0.0f;
     event System.Action mGameTickEvent;
@@ -48,6 +50,8 @@ public class GameMode : MonoBehaviour
         cInput.SetKey("down2", Keys.Xbox2DPadDown);
         cInput.SetKey("attack2", Keys.Xbox2A);
         Instance = this;
+
+        timer = GameTimerOffset;
     }
 
     void LateUpdate()
