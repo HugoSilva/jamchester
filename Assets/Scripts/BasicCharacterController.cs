@@ -33,16 +33,13 @@ public class BasicCharacterController : MonoBehaviour
         GameMode.Instance.RegisterGameTickMethod(OnGameTick);
     }
 
-<<<<<<< HEAD
+
     void OnDestroy()
-=======
-    public void CreateClone()
->>>>>>> 2fb4ec6702a795aed63226edf71674ad921488bf
     {
         GameMode.Instance.UnregisterGameTickMethod(OnGameTick);
     }
 
-    void CreateClone(Vector3 pos)
+    public void CreateClone(Vector3 pos)
     {
         GameObject clone = Instantiate(this.gameObject, pos, mTransform.rotation);
         CloneLogic logic = clone.AddComponent<CloneLogic>();

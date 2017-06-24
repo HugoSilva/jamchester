@@ -7,7 +7,7 @@ public class CloneManager : MonoBehaviour {
     void OnTriggerEnter(Collider other) {
         if (other.gameObject.tag == "Player") {
             if(other.GetComponent<BasicCharacterController>().bUserInput) {
-                other.GetComponent<BasicCharacterController>().CreateClone();
+                other.GetComponent<BasicCharacterController>().CreateClone(other.transform.position);
                 Debug.Log("Created a new clone");
             }
         }
