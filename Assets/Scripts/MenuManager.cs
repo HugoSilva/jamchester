@@ -14,7 +14,8 @@ public class MenuManager : MonoBehaviour {
         cInput.SetKey("left1", Keys.Xbox1DPadLeft);
         cInput.SetKey("right1", Keys.Xbox1DPadRight);
         cInput.SetKey("select1", Keys.Xbox1A);
-        cInput.SetKey("start1", Keys.Xbox1Start);
+        //cInput.SetKey("start1", Keys.Xbox1Start);
+        cInput.SetKey("start1", Keys.M);
 
         cInput.SetKey("left2", Keys.Xbox2DPadLeft);
         cInput.SetKey("right2", Keys.Xbox2DPadRight);

@@ -60,7 +60,7 @@ public class CloneLogic : MonoBehaviour
                 Destroy(this.gameObject);
 
                 GameObject drop = Instantiate(explosion, transform.position, Quaternion.identity);
-                Destroy(explosion, 1);
+                Destroy(drop, 1);
             }
         }
     }
