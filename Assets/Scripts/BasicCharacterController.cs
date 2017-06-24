@@ -15,6 +15,11 @@ public class BasicCharacterController : MonoBehaviour
         return mNextMovementAction;
     }
 
+    public void SetCurrentAction(MovementAction action)
+    {
+        mNextMovementAction = action;
+    }
+
     void Awake()
     {
         mTransform = this.transform;
@@ -30,6 +35,7 @@ public class BasicCharacterController : MonoBehaviour
     {
         GameObject clone = Instantiate(this.gameObject, mTransform.position, mTransform.rotation);
         CloneLogic logic = clone.AddComponent<CloneLogic>();
+        clone.GetComponent<BasicCharacterController>().bUserInput = false;
         logic.SetOriginalCharacter(this);
         clone.SetActive(false);
     }
@@ -58,6 +64,14 @@ public class BasicCharacterController : MonoBehaviour
                 break;
         }
         mNextMovementAction = MovementAction.NONE;
+
+        RaycastHit hit;
+        if (Physics.Raycast(mTransform.position, Vector3.down, out hit)) {
+            FloorTile tile = hit.collider.GetComponent<FloorTile>();
+            if (tile != null && tile.MyType == FloorTileType.TIMEPAD) {
+                CreateClone();
+            }
+        }
     }
 
     IEnumerator Attack()
