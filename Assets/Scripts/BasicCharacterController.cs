@@ -45,6 +45,7 @@ public class BasicCharacterController : MonoBehaviour
         CloneLogic logic = clone.AddComponent<CloneLogic>();
         clone.GetComponent<BasicCharacterController>().bUserInput = false;
         logic.SetOriginalCharacter(this);
+        logic.SetExplosion(this.explosion);
         clone.SetActive(false);
     }
 
@@ -175,9 +176,12 @@ public class BasicCharacterController : MonoBehaviour
         }
     }
 
+    public GameObject explosion;
     void Explode()
     {
+        GameObject drop = Instantiate(explosion, transform.position, Quaternion.identity);
         Destroy(this.gameObject);
+        Destroy(explosion, 1);
     }
 
     void Update()
