@@ -5,6 +5,7 @@ public class GameMode : MonoBehaviour
 {
     public float GameTickInterval;
     public float GameTimerOffset;
+    public int CloneDelayTicks;
     public int ScoreP1 = 0;
     public int ScoreP2 = 0;
     public Text ScoreP1Text;

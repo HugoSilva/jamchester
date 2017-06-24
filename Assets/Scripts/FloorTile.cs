@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum FloorTileType
 {
@@ -11,6 +12,7 @@ public class FloorTile : MonoBehaviour
     public bool MyState;
     public FloorTile MyTarget;
     public int MyCooldown;
+    public Image MyUIImage;
 
     void Start()
     {
@@ -25,6 +27,9 @@ public class FloorTile : MonoBehaviour
         }
         if (MyCooldown > 0) {
             MyCooldown--;
+        }
+        if (MyUIImage) {
+            MyUIImage.fillAmount = (float)MyCooldown / (float)GameMode.Instance.CloneDelayTicks;
         }
     }
 }

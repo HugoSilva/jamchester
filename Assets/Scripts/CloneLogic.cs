@@ -46,7 +46,7 @@ public class CloneLogic : MonoBehaviour
             CloneFrame frame;
             frame.action = mOriginalCharacter.GetCurrentAction();
             mCloneFrames.Add(frame);
-            if (mCloneFrames.Count >= 30) {
+            if (mCloneFrames.Count >= GameMode.Instance.CloneDelayTicks) {
                 mState = CloneState.PLAYBACK;
                 this.gameObject.SetActive(true);
             }

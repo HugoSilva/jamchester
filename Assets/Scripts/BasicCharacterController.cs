@@ -12,6 +12,7 @@ public class BasicCharacterController : MonoBehaviour
     MovementAction mNextMovementAction;
     Transform mTransform;
     public bool bUserInput = true;
+    FloorTile mLastTile;
 
     public MovementAction GetCurrentAction()
     {
@@ -59,7 +60,7 @@ public class BasicCharacterController : MonoBehaviour
         switch(mNextMovementAction) {
             case MovementAction.LEFT:
                 nextPosition += new Vector3(-1, 0, 0);
-                if (mTransform.position.x == -5) {
+                if (mTransform.position.x <= -5) {
                     doWrapAround = true;
                     wrapAroundX = 3;
                     wrapAroundX2 = 4;
@@ -68,7 +69,7 @@ public class BasicCharacterController : MonoBehaviour
                 break;
             case MovementAction.RIGHT:
                 nextPosition += new Vector3(1, 0, 0);
-                if (mTransform.position.x == 3) {
+                if (mTransform.position.x >= 3) {
                     doWrapAround = true;
                     wrapAroundX = -5;
                     wrapAroundX2 = -6;
@@ -124,12 +125,23 @@ public class BasicCharacterController : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(nextPosition, Vector3.down, out hit)) {
             FloorTile tile = hit.collider.GetComponent<FloorTile>();
+
+            if (tile != mLastTile) {
+                LeanTween.moveY(tile.gameObject, -0.2f, 0.2f)
+                    .setEase(LeanTweenType.easeOutElastic)
+                    .setOnComplete(() => {
+                        LeanTween.moveY(tile.gameObject, 0.0f, 0.2f);
+                    });
+            }
+
+            mLastTile = tile;
+
             if (tile != null) {
                 switch(tile.MyType) {
                     case FloorTileType.TIMEPAD:
                         if (bUserInput && tile.MyCooldown == 0) {
                             CreateClone(nextPosition);
-                            tile.MyCooldown = 5;
+                            tile.MyCooldown = GameMode.Instance.CloneDelayTicks;
                         }
                         break;
                     case FloorTileType.CONVEYOR:
