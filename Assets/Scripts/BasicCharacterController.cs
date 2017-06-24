@@ -10,7 +10,7 @@ public class BasicCharacterController : MonoBehaviour
     }
     MovementAction mNextMovementAction;
     Transform mTransform;
-    bool bUserInput = true;
+    public bool bUserInput = true;
 
     public MovementAction GetCurrentAction()
     {
@@ -33,7 +33,11 @@ public class BasicCharacterController : MonoBehaviour
         GameMode.Instance.RegisterGameTickMethod(OnGameTick);
     }
 
+<<<<<<< HEAD
     void OnDestroy()
+=======
+    public void CreateClone()
+>>>>>>> 2fb4ec6702a795aed63226edf71674ad921488bf
     {
         GameMode.Instance.UnregisterGameTickMethod(OnGameTick);
     }
