@@ -1,8 +1,10 @@
 ﻿using UnityEngine.SceneManagement;
 using UnityEngine;
+using System.Collections;
 
 struct Hamsters {
     GameObject model;
+    GameObject hat;
     Sprite label;
     AudioSource sound;
 }
@@ -17,8 +19,10 @@ public class MenuManager : MonoBehaviour {
     bool player2Selected = false;
     public GameObject startText;
     public GameObject characterSelect;
-    public AudioSource startSound;
-    public AudioSource selectSound;
+    public AudioSource player;
+    public AudioClip startSound;
+    public AudioClip selectSound;
+    public AudioClip readySound;
 
     void Awake() {
         cInput.Init();
@@ -39,9 +43,9 @@ public class MenuManager : MonoBehaviour {
     }
 
     void Update() {
-        if(cInput.GetButtonDown("start1") && !start) {
+        if((cInput.GetButtonDown("start1") || cInput.GetButtonDown("start2")) && !start) {
             start = true;
-            PlayButtonSFX();
+            playSFX(startSound);
         }
         if(start) {
             startText.SetActive(false);
@@ -50,13 +54,13 @@ public class MenuManager : MonoBehaviour {
                 player1Selected = true;
                 selectPlayer1.SetActive(false);
                 selectedPlayer1.SetActive(true);
-                PlaySelectedSFX();
+                playSFX(selectSound);
             }
             if (cInput.GetButtonDown("select2")) {
                 player2Selected = true;
                 selectPlayer2.SetActive(false);
                 selectedPlayer2.SetActive(true);
-                PlaySelectedSFX();
+                playSFX(selectSound);
             }
         }
         if (player1Selected && player2Selected) {
@@ -64,15 +68,30 @@ public class MenuManager : MonoBehaviour {
         }
     }
 
-    void PlayButtonSFX() {
-        startSound.Play();
+    void playSFX(AudioClip clip) {
+        if(player.isPlaying) {
+            player.Stop();
+        }
+        player.clip = clip;
+        player.Play();
     }
 
-    void PlaySelectedSFX() {
-        selectSound.Play();
+    IEnumerator Example(bool condition) {
+        yield return new WaitForSeconds(2);
+        if(condition) {
+            SceneManager.LoadScene("LukeTestScene");
+        }
+        else {
+            ReadySound();
+        }
     }
 
     public void StartGame() {
-        SceneManager.LoadScene("LukeTestScene");
+        StartCoroutine(Example(false));
+    }
+
+    public void ReadySound() {
+        playSFX(readySound);
+        StartCoroutine(Example(true));
     }
 }
