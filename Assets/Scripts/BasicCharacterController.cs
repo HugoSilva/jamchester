@@ -7,6 +7,7 @@ public class BasicCharacterController : MonoBehaviour
     public int MyID;
 
     public AudioClip SpawnAudio;
+    public AudioClip PunchAudio;
     
     public enum MovementAction {
         NONE, RIGHT, UP, LEFT, DOWN, ATTACK
@@ -172,6 +173,7 @@ public class BasicCharacterController : MonoBehaviour
 
     IEnumerator Attack(Vector3 pos)
     {
+        GetComponent<AudioSource>().PlayOneShot(PunchAudio);
         float animTime = GameMode.Instance.GameTickInterval * 0.5f;
         Transform fist = mTransform.Find("Fist");
         LeanTween.moveLocalX(fist.gameObject, fist.localPosition.x - 0.8f, animTime)
