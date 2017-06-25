@@ -201,7 +201,7 @@ public class BasicCharacterController : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
-        Destroy(explosion.gameObject, 1);
+        Destroy(drop.gameObject, 1);
     }
 
     void Respawn()
