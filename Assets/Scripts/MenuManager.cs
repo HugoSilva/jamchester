@@ -35,6 +35,8 @@ public class MenuManager : MonoBehaviour {
     public AudioClip readySound;
     public int player1Value = 0;
     public int player2Value = 1;
+    public GameObject logoBig;
+    public GameObject logoSmall;
 
     void Awake() {
         cInput.Init();
@@ -129,6 +131,8 @@ public class MenuManager : MonoBehaviour {
         if((cInput.GetButtonDown("start1") || cInput.GetButtonDown("start2")) && !start) {
             start = true;
             playSFX(startSound);
+            logoBig.SetActive(false);
+            logoSmall.SetActive(true);
         }
         if(start) {
             startText.SetActive(false);
