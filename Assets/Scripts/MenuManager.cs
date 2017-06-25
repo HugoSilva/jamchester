@@ -33,6 +33,7 @@ public class MenuManager : MonoBehaviour {
     public AudioClip startSound;
     public AudioClip selectSound;
     public AudioClip readySound;
+    public AudioClip clickSound;
     public int player1Value = 0;
     public int player2Value = 1;
     public GameObject logoBig;
@@ -151,15 +152,19 @@ public class MenuManager : MonoBehaviour {
             }
             if (cInput.GetButtonDown("left1")) {
                 ChangePlayer(1, -1);
+                playSFX(this.clickSound);
             }
             if (cInput.GetButtonDown("right1")) {
                 ChangePlayer(1, 1);
+                playSFX(this.clickSound);
             }
             if (cInput.GetButtonDown("left2")) {
                 ChangePlayer(2, -1);
+                playSFX(this.clickSound);
             }
             if (cInput.GetButtonDown("right2")) {
                 ChangePlayer(2, 1);
+                playSFX(this.clickSound);
             }
         }
         if (player1Selected && player2Selected) {
