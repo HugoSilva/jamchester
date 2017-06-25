@@ -5,6 +5,8 @@ using System.Collections;
 public class BasicCharacterController : MonoBehaviour
 {
     public int MyID;
+
+    public AudioClip SpawnAudio;
     
     public enum MovementAction {
         NONE, RIGHT, UP, LEFT, DOWN, ATTACK
@@ -142,6 +144,7 @@ public class BasicCharacterController : MonoBehaviour
                         if (bUserInput && tile.MyCooldown == 0) {
                             CreateClone(nextPosition);
                             tile.MyCooldown = GameMode.Instance.CloneDelayTicks;
+                            GetComponent<AudioSource>().PlayOneShot(SpawnAudio);
                         }
                         break;
                     case FloorTileType.CONVEYOR:
