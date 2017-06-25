@@ -137,13 +137,13 @@ public class MenuManager : MonoBehaviour {
                 player1Selected = true;
                 selectPlayer1.SetActive(false);
                 selectedPlayer1.SetActive(true);
-                playSFX(selectSound);
+                playSFX(this.models[player1Value].sound);
             }
             if (cInput.GetButtonDown("select2")) {
                 player2Selected = true;
                 selectPlayer2.SetActive(false);
                 selectedPlayer2.SetActive(true);
-                playSFX(selectSound);
+                playSFX(this.models[player2Value].sound);
             }
             if (cInput.GetButtonDown("left1")) {
                 ChangePlayer(1, -1);
