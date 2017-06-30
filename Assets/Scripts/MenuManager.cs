@@ -198,7 +198,7 @@ public class MenuManager : MonoBehaviour {
     IEnumerator Example(bool condition) {
         yield return new WaitForSeconds(2);
         if(condition) {
-            SceneManager.LoadScene("LukeTestScene");
+            SceneManager.LoadScene("Game");
         }
         else {
             ReadySound();
