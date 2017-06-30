@@ -41,22 +41,37 @@ public class MenuManager : MonoBehaviour {
 
     void Awake() {
         cInput.Init();
+        if (Input.GetJoystickNames().Length > 1) {
+            SetupGamepad();
+        } else {
+            SetupKeyboard();
+        }
+
+        SetPlayers();
+    }
+
+    void SetupKeyboard() {
+        cInput.SetKey("left1", Keys.A);
+        cInput.SetKey("right1", Keys.D);
+        cInput.SetKey("select1", Keys.Space);
+        cInput.SetKey("start1", Keys.Enter);
+
+        cInput.SetKey("left2", Keys.LeftArrow);
+        cInput.SetKey("right2", Keys.RightArrow);
+        cInput.SetKey("select2", Keys.RightControl);
+        cInput.SetKey("start2", Keys.KeypadEnter);
+    }
+
+    void SetupGamepad() {
         cInput.SetKey("left1", Keys.Xbox1DPadLeft);
         cInput.SetKey("right1", Keys.Xbox1DPadRight);
         cInput.SetKey("select1", Keys.Xbox1A);
         cInput.SetKey("start1", Keys.Xbox1Start);
-        //TEST ONLY
-        //cInput.SetKey("left1", Keys.A);
-        //cInput.SetKey("right1", Keys.D);
-        //cInput.SetKey("select1", Keys.E);
-        //cInput.SetKey("start1", Keys.Q);
 
         cInput.SetKey("left2", Keys.Xbox2DPadLeft);
         cInput.SetKey("right2", Keys.Xbox2DPadRight);
         cInput.SetKey("select2", Keys.Xbox2A);
         cInput.SetKey("start2", Keys.Xbox2Start);
-
-        SetPlayers();
     }
 
     void SetPlayers() {
