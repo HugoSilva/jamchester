@@ -7,6 +7,8 @@ public class Hamster {
     public GameObject model;
     public GameObject hat;
     public Sprite label;
+    public string name;
+    public int score;
     public AudioClip sound;
 
     public Hamster(GameObject model, GameObject hat, Sprite label, AudioClip sound) {
@@ -41,37 +43,24 @@ public class MenuManager : MonoBehaviour {
 
     void Awake() {
         cInput.Init();
-        if (Input.GetJoystickNames().Length > 1) {
-            SetupGamepad();
-        } else {
-            SetupKeyboard();
-        }
-
+        SetupInputs();
         SetPlayers();
     }
 
-    void SetupKeyboard() {
-        cInput.SetKey("left1", Keys.A);
-        cInput.SetKey("right1", Keys.D);
-        cInput.SetKey("select1", Keys.Space);
-        cInput.SetKey("start1", Keys.Enter);
+    void SetupInputs() {
+        cInput.SetKey("left1", Keys.Xbox1DPadLeft, Keys.A);
+        cInput.SetKey("right1", Keys.Xbox1DPadRight, Keys.D);
+        cInput.SetKey("up1", Keys.Xbox1DPadUp, Keys.W);
+        cInput.SetKey("down1", Keys.Xbox1DPadDown, Keys.S);
+        cInput.SetKey("select1", Keys.Xbox1A, Keys.LeftControl);
+        cInput.SetKey("start1", Keys.Xbox1Start, Keys.Enter);
 
-        cInput.SetKey("left2", Keys.LeftArrow);
-        cInput.SetKey("right2", Keys.RightArrow);
-        cInput.SetKey("select2", Keys.RightControl);
-        cInput.SetKey("start2", Keys.KeypadEnter);
-    }
-
-    void SetupGamepad() {
-        cInput.SetKey("left1", Keys.Xbox1DPadLeft);
-        cInput.SetKey("right1", Keys.Xbox1DPadRight);
-        cInput.SetKey("select1", Keys.Xbox1A);
-        cInput.SetKey("start1", Keys.Xbox1Start);
-
-        cInput.SetKey("left2", Keys.Xbox2DPadLeft);
-        cInput.SetKey("right2", Keys.Xbox2DPadRight);
-        cInput.SetKey("select2", Keys.Xbox2A);
-        cInput.SetKey("start2", Keys.Xbox2Start);
+        cInput.SetKey("left2", Keys.Xbox2DPadLeft, Keys.LeftArrow);
+        cInput.SetKey("right2", Keys.Xbox2DPadRight, Keys.RightArrow);
+        cInput.SetKey("up2", Keys.Xbox2DPadUp, Keys.UpArrow);
+        cInput.SetKey("down2", Keys.Xbox2DPadDown, Keys.DownArrow);
+        cInput.SetKey("select2", Keys.Xbox2A, Keys.RightControl);
+        cInput.SetKey("start2", Keys.Xbox2Start, Keys.KeypadEnter);
     }
 
     void SetPlayers() {
@@ -154,16 +143,10 @@ public class MenuManager : MonoBehaviour {
             startText.SetActive(false);
             characterSelect.SetActive(true);
             if (cInput.GetButtonDown("select1")) {
-                player1Selected = true;
-                selectPlayer1.SetActive(false);
-                selectedPlayer1.SetActive(true);
-                playSFX(this.models[player1Value].sound);
+                SelectPlayer1();
             }
             if (cInput.GetButtonDown("select2")) {
-                player2Selected = true;
-                selectPlayer2.SetActive(false);
-                selectedPlayer2.SetActive(true);
-                playSFX(this.models[player2Value].sound);
+                SelectPlayer2();
             }
             if (cInput.GetButtonDown("left1")) {
                 ChangePlayer(1, -1);
@@ -185,6 +168,26 @@ public class MenuManager : MonoBehaviour {
         if (player1Selected && player2Selected) {
             StartGame();
         }
+    }
+
+    void SelectPlayer1() {
+        player1Selected = true;
+        selectPlayer1.SetActive(false);
+        selectedPlayer1.SetActive(true);
+        playSFX(this.models[player1Value].sound);
+
+        PlayerInfo info = GameObject.Find("PlayerInfo").GetComponent<PlayerInfo>();
+        info.SetPlayer1(this.models[player1Value]);
+    }
+
+    void SelectPlayer2() {
+        player2Selected = true;
+        selectPlayer2.SetActive(false);
+        selectedPlayer2.SetActive(true);
+        playSFX(this.models[player2Value].sound);
+
+        PlayerInfo info = GameObject.Find("PlayerInfo").GetComponent<PlayerInfo>();
+        info.SetPlayer2(this.models[player2Value]);
     }
 
     void playSFX(AudioClip clip) {

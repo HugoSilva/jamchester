@@ -19,9 +19,8 @@ public class FloorTile : MonoBehaviour
         GameMode.Instance.RegisterGameTickMethod(OnGameTick);
         this.transform.localRotation = Quaternion.Euler(90, Random.Range(0, 3) * 90, 0);
         if (MyType == FloorTileType.NONE) {
-            Material mat = transform.Find("default").GetComponent<MeshRenderer>().material;
-            Color c = new Color(Random.Range(0, 1), Random.Range(0, 1), Random.Range(0, 1));
-            mat.color = c;
+            Material mat = transform.GetComponent<MeshRenderer>().material;
+            //mat.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         }
     }
 

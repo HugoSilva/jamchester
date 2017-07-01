@@ -11,6 +11,9 @@ public class GameMode : MonoBehaviour
     public Text ScoreP1Text;
     public Text ScoreP2Text;
 
+    public GameObject player1;
+    public GameObject player2;
+
     public static GameMode Instance;
     float timer = 0.0f;
     event System.Action mGameTickEvent;
@@ -43,12 +46,16 @@ public class GameMode : MonoBehaviour
 
     public void OnPlayerDie(BasicCharacterController character)
     {
+        PlayerInfo info = GameObject.Find("PlayerInfo").GetComponent<PlayerInfo>();
+
         if (character.MyID == 1) {
             ScoreP2++;
             ScoreP2Text.text = "" + ScoreP2;
+            info.AddPointPlayer2();
         } else {
             ScoreP1++;
             ScoreP1Text.text = "" + ScoreP1;
+            info.AddPointPlayer1();
         }
     }
     
@@ -68,7 +75,25 @@ public class GameMode : MonoBehaviour
         cInput.SetKey("attack2", Keys.Xbox2A, Keys.RightControl);
         Instance = this;
 
+        DefinePlayers();
         timer = GameTimerOffset;
+    }
+
+
+    void DefinePlayers() {
+        PlayerInfo info = GameObject.Find("PlayerInfo").GetComponent<PlayerInfo>();
+        Hamster player1 = info.GetPlayer1();
+        Hamster player2 = info.GetPlayer2();
+
+        GameObject p1 = Instantiate(player1.model, Vector3.zero, Quaternion.identity, this.player1.transform);
+        p1.transform.localPosition = new Vector3(0, p1.transform.localPosition.y, 0);
+        p1.transform.localRotation = Quaternion.Euler(0, -90, 0);
+        p1.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+
+        GameObject p2 = Instantiate(player2.model, Vector3.zero, Quaternion.identity, this.player2.transform);
+        p2.transform.localPosition = new Vector3(0, p2.transform.localPosition.y, 0);
+        p2.transform.localRotation = Quaternion.Euler(0, -90, 0);
+        p2.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
     }
 
     void LateUpdate()
