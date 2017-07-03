@@ -50,11 +50,11 @@ public class GameMode : MonoBehaviour
 
         if (character.MyID == 1) {
             ScoreP2++;
-            ScoreP2Text.text = "" + ScoreP2;
+            ScoreP2Text.text = info.GetPlayer2().name + " " + ScoreP2;
             info.AddPointPlayer2();
         } else {
             ScoreP1++;
-            ScoreP1Text.text = "" + ScoreP1;
+            ScoreP1Text.text = info.GetPlayer1().name + " " + ScoreP1;
             info.AddPointPlayer1();
         }
     }
@@ -94,6 +94,19 @@ public class GameMode : MonoBehaviour
         p2.transform.localPosition = new Vector3(0, p2.transform.localPosition.y, 0);
         p2.transform.localRotation = Quaternion.Euler(0, -90, 0);
         p2.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+
+        ScoreP2Text.text = info.GetPlayer2().name + " " + ScoreP2;
+        ScoreP1Text.text = info.GetPlayer1().name + " " + ScoreP1;
+        if (player1.isBot) {
+            BasicCharacterController p1Controller = this.player1.GetComponentInParent<BasicCharacterController>();
+            p1Controller.isBot = true;
+            p1Controller.target = this.player2.transform;
+        }
+        if (player2.isBot) {
+            BasicCharacterController p2Controller = this.player2.GetComponentInParent<BasicCharacterController>();
+            p2Controller.isBot = true;
+            p2Controller.target = this.player1.transform;
+        }
     }
 
     void LateUpdate()

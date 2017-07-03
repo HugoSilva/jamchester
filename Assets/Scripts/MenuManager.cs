@@ -10,6 +10,7 @@ public class Hamster {
     public string name;
     public int score;
     public AudioClip sound;
+    public bool isBot;
 
     public Hamster(GameObject model, GameObject hat, Sprite label, AudioClip sound) {
         this.model = model;
@@ -40,11 +41,20 @@ public class MenuManager : MonoBehaviour {
     public int player2Value = 1;
     public GameObject logoBig;
     public GameObject logoSmall;
+    public bool waitingForBot = false;
+
+    public GameObject P1Start;
+    public GameObject P2Start;
 
     void Awake() {
         cInput.Init();
         SetupInputs();
         SetPlayers();
+
+        P1Start = GameObject.Find("P1Start");
+        P2Start = GameObject.Find("P2Start");
+        P1Start.SetActive(false);
+        P2Start.SetActive(false);
     }
 
     void SetupInputs() {
@@ -73,6 +83,10 @@ public class MenuManager : MonoBehaviour {
             GameObject.Destroy(child.gameObject);
         }
 
+        foreach (Transform child in selectedModel) {
+            GameObject.Destroy(child.gameObject);
+        }
+
         label.gameObject.GetComponent<SpriteRenderer>().sprite = this.models[player1Value].label;
         GameObject drop = Instantiate(this.models[player1Value].model, Vector3.zero, Quaternion.identity, model.gameObject.transform);
 
@@ -93,6 +107,11 @@ public class MenuManager : MonoBehaviour {
         foreach (Transform child in model2) {
             GameObject.Destroy(child.gameObject);
         }
+
+        foreach (Transform child in selectedModel2) {
+            GameObject.Destroy(child.gameObject);
+        }
+
         label2.gameObject.GetComponent<SpriteRenderer>().sprite = this.models[player2Value].label;
         GameObject drop2 = Instantiate(this.models[player2Value].model, Vector3.zero, Quaternion.identity, model2.gameObject.transform);
 
@@ -133,13 +152,18 @@ public class MenuManager : MonoBehaviour {
     }
 
     void Update() {
-        if((cInput.GetButtonDown("start1") || cInput.GetButtonDown("start2")) && !start) {
-            start = true;
-            playSFX(startSound);
-            logoBig.SetActive(false);
-            logoSmall.SetActive(true);
+        if(waitingForBot) {
+            return;
         }
-        if(start) {
+        if (cInput.GetButtonDown("start1")) {
+            ActivatePlayer1();
+        }
+
+        if (cInput.GetButtonDown("start2")) {
+            ActivatePlayer2();
+        }
+
+        if (start) {
             startText.SetActive(false);
             characterSelect.SetActive(true);
             if (cInput.GetButtonDown("select1")) {
@@ -165,26 +189,93 @@ public class MenuManager : MonoBehaviour {
                 playSFX(this.clickSound);
             }
         }
-        if (player1Selected && player2Selected) {
+        if (player1Selected && !selectPlayer2.activeInHierarchy) {
+            StartCoroutine(BotPause(SetBot2));
+            waitingForBot = true;
+        }
+        if (player2Selected && !selectPlayer1.activeInHierarchy) {
+            StartCoroutine(BotPause(SetBot1));
+            waitingForBot = true;
+        }
+        if (player1Selected && player2Selected && selectPlayer1.activeInHierarchy && selectPlayer2.activeInHierarchy) {
             StartGame();
         }
     }
 
-    void SelectPlayer1() {
+    public delegate void SetBotDelegate();
+
+    IEnumerator BotPause(SetBotDelegate callback) {
+        yield return new WaitForSeconds(2);
+        callback();
+    }
+
+    void SetBot2() {
+        do {
+            player2Value = Random.Range(0, models.Length - 1);
+        } while (player1Value == player2Value);
+        SetPlayers();
+        SelectPlayer2(true);
+        StartGame();
+    }
+
+    void SetBot1() {
+        do {
+            player1Value = Random.Range(0, models.Length - 1);
+        } while (player1Value == player2Value);
+        SetPlayers();
+        SelectPlayer1(true);
+        StartGame();
+    }
+
+    void ActivatePlayer1() {
+        if(!start) {
+            start = true;
+            playSFX(startSound);
+            logoBig.SetActive(false);
+            logoSmall.SetActive(true);
+        }
+        selectPlayer1.SetActive(true);
+        if(P1Start.gameObject.activeInHierarchy) {
+            P1Start.gameObject.SetActive(false);
+        }
+        if(!selectPlayer2.activeInHierarchy) {
+            P2Start.gameObject.SetActive(true);
+        }
+    }
+
+    void ActivatePlayer2() {
+        if (!start) {
+            start = true;
+            playSFX(startSound);
+            logoBig.SetActive(false);
+            logoSmall.SetActive(true);
+        }
+        selectPlayer2.SetActive(true);
+        if (P2Start.gameObject.activeInHierarchy) {
+            P2Start.gameObject.SetActive(false);
+        }
+        if (!selectPlayer1.activeInHierarchy) {
+            P1Start.gameObject.SetActive(true);
+        }
+    }
+
+    void SelectPlayer1(bool isBot = false) {
         player1Selected = true;
         selectPlayer1.SetActive(false);
         selectedPlayer1.SetActive(true);
         playSFX(this.models[player1Value].sound);
+        this.models[player1Value].isBot = isBot;
 
         PlayerInfo info = GameObject.Find("PlayerInfo").GetComponent<PlayerInfo>();
         info.SetPlayer1(this.models[player1Value]);
     }
 
-    void SelectPlayer2() {
+    void SelectPlayer2(bool isBot = false) {
         player2Selected = true;
         selectPlayer2.SetActive(false);
         selectedPlayer2.SetActive(true);
         playSFX(this.models[player2Value].sound);
+        this.models[player2Value].isBot = isBot;
 
         PlayerInfo info = GameObject.Find("PlayerInfo").GetComponent<PlayerInfo>();
         info.SetPlayer2(this.models[player2Value]);
@@ -198,7 +289,7 @@ public class MenuManager : MonoBehaviour {
         player.Play();
     }
 
-    IEnumerator Example(bool condition) {
+    IEnumerator StartPause(bool condition) {
         yield return new WaitForSeconds(2);
         if(condition) {
             SceneManager.LoadScene("Game");
@@ -209,11 +300,11 @@ public class MenuManager : MonoBehaviour {
     }
 
     public void StartGame() {
-        StartCoroutine(Example(false));
+        StartCoroutine(StartPause(false));
     }
 
     public void ReadySound() {
         playSFX(readySound);
-        StartCoroutine(Example(true));
+        StartCoroutine(StartPause(true));
     }
 }

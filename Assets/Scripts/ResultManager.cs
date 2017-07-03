@@ -1,17 +1,14 @@
 ﻿using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine;
+using System.Collections;
 
 public class ResultManager : MonoBehaviour {
-
+    
     public GameObject ScoreCanvas;
     public GameObject ResultCanvas;
     public GameObject Player1;
     public GameObject Player2;
-
-    void Update () {
-		
-	}
 
     public void ShowResults() {
         Player1.SetActive(false);
@@ -43,9 +40,11 @@ public class ResultManager : MonoBehaviour {
             p1Winner.text = "Loser";
             p2Winner.text = "Winner";
         }
+        StartCoroutine(TimeToMenu());
     }
 
-    public void Exit() {
+    IEnumerator TimeToMenu() {
+        yield return new WaitForSeconds(4);
         SceneManager.LoadScene("MainMenu");
     }
 }

@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: bb6bd31336fed40419f88c2d202b108c
+timeCreated: 1498986306
+licenseType: Pro
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Hardkaze
+  fontNames:
+  - Hardkaze
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

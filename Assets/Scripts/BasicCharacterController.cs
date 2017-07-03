@@ -17,6 +17,11 @@ public class BasicCharacterController : MonoBehaviour
     public bool bUserInput = true;
     FloorTile mLastTile;
 
+    public bool isBot = false;
+    float maxActionDelay = 0.3f;
+    float actionDelay = 0;
+    public Transform target;
+
     public MovementAction GetCurrentAction()
     {
         return mNextMovementAction;
@@ -214,8 +219,59 @@ public class BasicCharacterController : MonoBehaviour
         this.gameObject.SetActive(true);
     }
 
+    bool isDirectionCorrect(Vector3 direction) {
+        if(direction.x == -1 && this.transform.rotation.y == 0) {
+            return true;
+        }
+        if (direction.x == 1 && this.transform.rotation.y == 180) {
+            return true;
+        }
+        if (direction.z == -1 && this.transform.rotation.y == -90) {
+            return true;
+        }
+        if (direction.z == 1 && this.transform.rotation.y == 90) {
+            return true;
+        }
+        return false;
+    }
+
+    void runLogic() {
+        Vector3 vec = target.position - transform.position;
+        if ((Mathf.Abs(vec.x) == 1 && vec.z==0) || (Mathf.Abs(vec.z) == 1 && vec.x == 0)) {
+            if (isDirectionCorrect(vec)) {
+                mNextMovementAction = MovementAction.ATTACK;
+                if(maxActionDelay < 0.8) maxActionDelay = 0.8f;
+                return;
+            }
+        }
+        if (maxActionDelay > 0.3) maxActionDelay = 0.3f;
+        if (Mathf.Abs(vec.x) > Mathf.Abs(vec.z)) {
+            if(Mathf.Sign(vec.x) == 1) {
+                mNextMovementAction = MovementAction.RIGHT;
+            }
+            else {
+                mNextMovementAction = MovementAction.LEFT;
+            }
+        }
+        else {
+            if (Mathf.Sign(vec.z) == 1) {
+                mNextMovementAction = MovementAction.UP;
+            } else {
+                mNextMovementAction = MovementAction.DOWN;
+            }
+        }
+    }
+
     void Update()
     {
+        if(isBot) {
+            actionDelay += Time.deltaTime;
+            if(actionDelay > maxActionDelay) {
+                actionDelay = 0;
+                runLogic();
+                return;
+            }
+        }
         Collider[] overlaps = Physics.OverlapBox(mTransform.position, new Vector3(0.2f, 0.2f, 0.2f), Quaternion.identity);
         for (int i = 0; i < overlaps.Length; i++) {
             Collider overlap = overlaps[i];
