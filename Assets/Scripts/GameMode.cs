@@ -11,6 +11,9 @@ public class GameMode : MonoBehaviour
     public Text ScoreP1Text;
     public Text ScoreP2Text;
 
+    public GameObject player1;
+    public GameObject player2;
+
     public static GameMode Instance;
     float timer = 0.0f;
     event System.Action mGameTickEvent;
@@ -43,32 +46,67 @@ public class GameMode : MonoBehaviour
 
     public void OnPlayerDie(BasicCharacterController character)
     {
+        PlayerInfo info = GameObject.Find("PlayerInfo").GetComponent<PlayerInfo>();
+
         if (character.MyID == 1) {
             ScoreP2++;
-            ScoreP2Text.text = "" + ScoreP2;
+            ScoreP2Text.text = info.GetPlayer2().name + " " + ScoreP2;
+            info.AddPointPlayer2();
         } else {
             ScoreP1++;
-            ScoreP1Text.text = "" + ScoreP1;
+            ScoreP1Text.text = info.GetPlayer1().name + " " + ScoreP1;
+            info.AddPointPlayer1();
         }
     }
     
     void Awake()
     {
         cInput.Init();
-        cInput.SetKey("left1", Keys.Xbox1DPadLeft, "A");
-        cInput.SetKey("right1", Keys.Xbox1DPadRight, "D");
-        cInput.SetKey("up1", Keys.Xbox1DPadUp, "W");
-        cInput.SetKey("down1", Keys.Xbox1DPadDown, "S");
-        cInput.SetKey("attack1", Keys.Xbox1A);
+        cInput.SetKey("left1", Keys.Xbox1DPadLeft, Keys.A);
+        cInput.SetKey("right1", Keys.Xbox1DPadRight, Keys.D);
+        cInput.SetKey("up1", Keys.Xbox1DPadUp, Keys.W);
+        cInput.SetKey("down1", Keys.Xbox1DPadDown, Keys.S);
+        cInput.SetKey("attack1", Keys.Xbox1A, Keys.LeftControl);
 
-        cInput.SetKey("left2", Keys.Xbox2DPadLeft);
-        cInput.SetKey("right2", Keys.Xbox2DPadRight);
-        cInput.SetKey("up2", Keys.Xbox2DPadUp);
-        cInput.SetKey("down2", Keys.Xbox2DPadDown);
-        cInput.SetKey("attack2", Keys.Xbox2A);
+        cInput.SetKey("left2", Keys.Xbox2DPadLeft, Keys.LeftArrow);
+        cInput.SetKey("right2", Keys.Xbox2DPadRight, Keys.RightArrow);
+        cInput.SetKey("up2", Keys.Xbox2DPadUp, Keys.UpArrow);
+        cInput.SetKey("down2", Keys.Xbox2DPadDown, Keys.DownArrow);
+        cInput.SetKey("attack2", Keys.Xbox2A, Keys.RightControl);
         Instance = this;
 
+        DefinePlayers();
         timer = GameTimerOffset;
+    }
+
+
+    void DefinePlayers() {
+        PlayerInfo info = GameObject.Find("PlayerInfo").GetComponent<PlayerInfo>();
+        Hamster player1 = info.GetPlayer1();
+        Hamster player2 = info.GetPlayer2();
+
+        GameObject p1 = Instantiate(player1.model, Vector3.zero, Quaternion.identity, this.player1.transform);
+        p1.transform.localPosition = new Vector3(0, p1.transform.localPosition.y, 0);
+        p1.transform.localRotation = Quaternion.Euler(0, -90, 0);
+        p1.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+
+        GameObject p2 = Instantiate(player2.model, Vector3.zero, Quaternion.identity, this.player2.transform);
+        p2.transform.localPosition = new Vector3(0, p2.transform.localPosition.y, 0);
+        p2.transform.localRotation = Quaternion.Euler(0, -90, 0);
+        p2.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+
+        ScoreP2Text.text = info.GetPlayer2().name + " " + ScoreP2;
+        ScoreP1Text.text = info.GetPlayer1().name + " " + ScoreP1;
+        if (player1.isBot) {
+            BasicCharacterController p1Controller = this.player1.GetComponentInParent<BasicCharacterController>();
+            p1Controller.isBot = true;
+            p1Controller.target = this.player2.transform;
+        }
+        if (player2.isBot) {
+            BasicCharacterController p2Controller = this.player2.GetComponentInParent<BasicCharacterController>();
+            p2Controller.isBot = true;
+            p2Controller.target = this.player1.transform;
+        }
     }
 
     void LateUpdate()
