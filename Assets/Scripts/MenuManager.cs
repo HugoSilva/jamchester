@@ -43,8 +43,11 @@ public class MenuManager : MonoBehaviour {
     public GameObject logoSmall;
     public bool waitingForBot = false;
 
-    public GameObject P1Start;
-    public GameObject P2Start;
+    GameObject P1Start;
+    GameObject P2Start;
+
+    bool P1IsPlaying = false;
+    bool P2IsPlaying = false;
 
     void Awake() {
         cInput.Init();
@@ -189,16 +192,17 @@ public class MenuManager : MonoBehaviour {
                 playSFX(this.clickSound);
             }
         }
-        if (player1Selected && !selectPlayer2.activeInHierarchy) {
+        if (player1Selected && !P2IsPlaying) {
             StartCoroutine(BotPause(SetBot2));
             waitingForBot = true;
         }
-        if (player2Selected && !selectPlayer1.activeInHierarchy) {
+        if (player2Selected && !P1IsPlaying) {
             StartCoroutine(BotPause(SetBot1));
             waitingForBot = true;
         }
-        if (player1Selected && player2Selected && selectPlayer1.activeInHierarchy && selectPlayer2.activeInHierarchy) {
+        if (player1Selected && player2Selected && P1IsPlaying && P2IsPlaying) {
             StartGame();
+            waitingForBot = true;
         }
     }
 
@@ -213,6 +217,7 @@ public class MenuManager : MonoBehaviour {
         do {
             player2Value = Random.Range(0, models.Length - 1);
         } while (player1Value == player2Value);
+        P2Start.SetActive(false);
         SetPlayers();
         SelectPlayer2(true);
         StartGame();
@@ -222,6 +227,7 @@ public class MenuManager : MonoBehaviour {
         do {
             player1Value = Random.Range(0, models.Length - 1);
         } while (player1Value == player2Value);
+        P1Start.SetActive(false);
         SetPlayers();
         SelectPlayer1(true);
         StartGame();
@@ -234,6 +240,7 @@ public class MenuManager : MonoBehaviour {
             logoBig.SetActive(false);
             logoSmall.SetActive(true);
         }
+        P1IsPlaying = true;
         selectPlayer1.SetActive(true);
         if(P1Start.gameObject.activeInHierarchy) {
             P1Start.gameObject.SetActive(false);
@@ -250,6 +257,7 @@ public class MenuManager : MonoBehaviour {
             logoBig.SetActive(false);
             logoSmall.SetActive(true);
         }
+        P2IsPlaying = true;
         selectPlayer2.SetActive(true);
         if (P2Start.gameObject.activeInHierarchy) {
             P2Start.gameObject.SetActive(false);
