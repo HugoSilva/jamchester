@@ -239,12 +239,17 @@ public class BasicCharacterController : MonoBehaviour
         Vector3 vec = target.position - transform.position;
         if ((Mathf.Abs(vec.x) == 1 && vec.z==0) || (Mathf.Abs(vec.z) == 1 && vec.x == 0)) {
             if (isDirectionCorrect(vec)) {
+                if (maxActionDelay < 0.8f) {
+                    maxActionDelay = 0.8f;
+                }
+                Debug.Log("Attack");
                 mNextMovementAction = MovementAction.ATTACK;
-                if(maxActionDelay < 0.8) maxActionDelay = 0.8f;
                 return;
             }
         }
-        if (maxActionDelay > 0.3) maxActionDelay = 0.3f;
+        if (maxActionDelay > 0.3f) {
+            maxActionDelay = 0.3f;
+        }
         if (Mathf.Abs(vec.x) > Mathf.Abs(vec.z)) {
             if(Mathf.Sign(vec.x) == 1) {
                 mNextMovementAction = MovementAction.RIGHT;
