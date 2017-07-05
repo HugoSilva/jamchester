@@ -73,7 +73,7 @@ public class MenuManager : MonoBehaviour {
         cInput.SetKey("up2", Keys.Xbox2DPadUp, Keys.UpArrow);
         cInput.SetKey("down2", Keys.Xbox2DPadDown, Keys.DownArrow);
         cInput.SetKey("select2", Keys.Xbox2A, Keys.RightControl);
-        cInput.SetKey("start2", Keys.Xbox2Start, Keys.KeypadEnter);
+        cInput.SetKey("start2", Keys.Xbox2Start, Keys.Space);
     }
 
     void SetPlayers() {
